@@ -1,5 +1,6 @@
-import React, { Component } from "react";
+import React, { Component, useState } from "react";
 import { SafeAreaView, View, Text, StyleSheet } from "react-native";
+import PokemonDetail from "../components/pokemon-detail.component";
 
 export default function DetailPokemon({
   route,
@@ -9,11 +10,9 @@ export default function DetailPokemon({
   navigation: any;
 }) {
   const { id } = route.params;
-  console.log(id);
-
   return (
     <View style={styles.container}>
-      <Text>My text</Text>
+      <PokemonDetail idPokemon={id}></PokemonDetail>
     </View>
   );
 }
