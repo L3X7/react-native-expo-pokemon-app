@@ -8,7 +8,6 @@ import pokemonTypeDetail from "./pokemon-type-detail.component";
 
 const PokemonDetail = ({ idPokemon }: { idPokemon: number }) => {
 
-
     let pokemonService = new PokemonService();
     const [pokemonDetail, setPokemonDetail] = useState<PokemonDetailInterface>();
 
