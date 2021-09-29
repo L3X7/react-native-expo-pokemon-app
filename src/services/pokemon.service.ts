@@ -27,4 +27,17 @@ export class PokemonService{
             Alert.alert('Error', 'Error service');
         }
     }
+
+    getByName = async(name: string) => {
+        try{
+            const result = await fetchApi(
+                env.urlPokemon.concat(`${name}`),
+                'GET'
+            )
+            return result; 
+        }
+        catch(error){
+            Alert.alert('Error', 'Error service');
+        }
+    }
 }
