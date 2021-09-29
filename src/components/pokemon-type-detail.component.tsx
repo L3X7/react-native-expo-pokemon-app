@@ -43,7 +43,7 @@ const getColor = (type: string) => {
             </View>
             break;
         case 'grass':
-            myContent = <View style={{ backgroundColor: '#7AC74C', flex: 1, justifyContent: 'center', alignItems: 'center', marginBottom: 60, borderRadius: 2 }}>
+            myContent = <View style={{ backgroundColor: '#7AC74C', flex: 1, justifyContent: 'center', alignItems: 'center', borderRadius: 2 }}>
                 <Text style={{ color: 'white', padding: 5 }}>
                     {type}
                 </Text>
@@ -64,7 +64,7 @@ const getColor = (type: string) => {
             </View>
             break;
         case 'poison':
-            myContent = <View style={{ backgroundColor: '#A33EA1', flex: 1, justifyContent: 'center', alignItems: 'center', marginBottom: 60, borderRadius: 2 }}>
+            myContent = <View style={{ backgroundColor: '#A33EA1', flex: 1, justifyContent: 'center', alignItems: 'center', borderRadius: 2 }}>
                 <Text style={{ color: 'white', padding: 5 }}>
                     {type}
                 </Text>

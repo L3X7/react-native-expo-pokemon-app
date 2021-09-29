@@ -3,13 +3,13 @@ import { View, Text, StyleSheet, Image } from "react-native";
 import { Card } from "react-native-elements";
 import { PokemonService } from "../services/pokemon.service";
 import PokemonTypeDetail from "./pokemon-type-detail.component";
-import pokemonTypeDetail from "./pokemon-type-detail.component";
 
 
 const PokemonDetail = ({ idPokemon }: { idPokemon: number }) => {
 
     let pokemonService = new PokemonService();
     const [pokemonDetail, setPokemonDetail] = useState<PokemonDetailInterface>();
+    const [loadingData, setLoadingData] = useState<boolean>(true);
 
     const getPokemon = (id: number) => {
         pokemonService
@@ -30,8 +30,11 @@ const PokemonDetail = ({ idPokemon }: { idPokemon: number }) => {
                     height: result.data.height
                 };
                 setPokemonDetail(pokemonDetailInterface);
+                setLoadingData(false);
             })
-            .catch((e) => { });
+            .catch((e) => {
+                setLoadingData(false);
+            });
     };
 
     useEffect(() => {
@@ -41,29 +44,24 @@ const PokemonDetail = ({ idPokemon }: { idPokemon: number }) => {
 
 
     return (
-        <View>
-            <Card>
-                <View>
-                    <Card.Title><Text style={style.cardTextTitle}>{pokemonDetail?.name}</Text> # <Text style={style.cardTextSubTitle}>{pokemonDetail?.id}</Text></Card.Title>
-                    <Card.Divider />
-                </View>
-                <View style={style.cardBody}>
-                    <View style={style.cardBodyImage}>
-                        <Image source={{ uri: pokemonDetail?.urlImage }} style={style.imageCard}></Image>
-                    </View>
-                </View>
-                <View>
-                    {
-                        renderRowType('Tipo', pokemonDetail?.types)
-                    }
-                    {
-                        renderRow('Peso', pokemonDetail?.weight)
-                    }
-                    {
-                        renderRow('Altura', pokemonDetail?.height)
-                    }
-                </View>
-            </Card>
+        <View style={{ flex: 1, backgroundColor: 'white', margin: 20, flexDirection: 'column' }}>
+            <View style={{ flex: 0.10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={style.cardTextTitle}>{pokemonDetail?.name}</Text>
+            </View>
+            <View style={{ flex: 0.50, justifyContent: 'center', alignItems: 'center' }}>
+                <Image source={{ uri: pokemonDetail?.urlImage }} style={style.imageCard}></Image>
+            </View>
+            <View style={{ flex: 0.40 }}>
+                {
+                    renderRowType('Tipo', pokemonDetail?.types)
+                }
+                {/* {
+                    renderRow('Peso', pokemonDetail?.weight)
+                }
+                {
+                    renderRow('Altura', pokemonDetail?.height)
+                } */}
+            </View>
         </View>
     );
 }
@@ -74,7 +72,7 @@ const renderRow = (title: any, description: any) =>
             <Text>{title}:</Text>
         </View>
         <View style={style.cardBodyDetailChild} >
-            <Text style={{fontSize: 18, fontWeight: 'bold'}}>{description}</Text>
+            <Text style={{ fontSize: 18, fontWeight: 'bold' }}>{description}</Text>
         </View>
     </View>
 
@@ -93,9 +91,17 @@ const renderRowType = (title: any, description?: string[]) =>
     </View>
 
 const style = StyleSheet.create({
+    containerLoading: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
     cardTextTitle: {
-        fontSize:18,
-        fontWeight: 'bold'
+        fontSize: 18,
+        fontWeight: 'bold',
+        marginTop: 10,
+        marginBottom: 10
+
     },
     cardTextSubTitle: {
         color: '#969696'
@@ -116,15 +122,16 @@ const style = StyleSheet.create({
     },
     cardBodyDetail: {
         flex: 1,
-        marginTop: 25,
         flexDirection: 'row'
     },
     cardBodyDetailChild: {
-        flex: 1
+        flex: 1,
+        padding: 5
     },
     cardBodyDetailChildType: {
         flex: 1,
-        flexDirection: 'column'
+        flexDirection: 'column',
+        backgroundColor: 'red'
     }
 });
 

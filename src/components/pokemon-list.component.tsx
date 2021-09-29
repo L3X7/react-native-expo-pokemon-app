@@ -5,7 +5,7 @@ import {
   View,
   Image,
   StyleSheet,
-  TouchableHighlight,
+  TouchableHighlight
 } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -20,6 +20,7 @@ let pagination = {
 const PokemonList = (props: any) => {
   let pokemoninterfaceList: PokemonInterface[] = [];
   const [pokemonList, setPokemonList] = useState<PokemonInterface[]>([]);
+  const [loadingData, setLoadingData] = useState<boolean>(true);
   let pokemonService = new PokemonService();
   const navigation = useNavigation();
 
@@ -41,8 +42,11 @@ const PokemonList = (props: any) => {
           pokemoninterfaceList.push(pokemonModel);
         }
         setPokemonList(pokemoninterfaceList);
+        setLoadingData(false);
       })
-      .catch((e) => {});
+      .catch((e) => {
+        setLoadingData(false);
+      });
   };
 
   const actionNavigation = (offsetNumber: number) => {
@@ -52,54 +56,58 @@ const PokemonList = (props: any) => {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.listContainer}>
-        <FlatList
-          keyExtractor={(item) => item.id.toString()}
-          data={pokemonList}
-          ItemSeparatorComponent= {ItemSeprator}
-          renderItem={({ item }) => (
-            <View style={styles.itemList}>
-              <View style={{ flex: 2 }}>
-                <Image
-                  source={{
-                    uri: `${item.urlImage}`,
-                  }}
-                  style={{ width: 30, height: 30 }}
-                ></Image>
-              </View>
-              <View style={{ flex: 4 }}>
-                <Text style={{fontSize: 16}}>{item.name}</Text>
-              </View>
-              <View style={{ flex: 1 }}>
-                <TouchableHighlight
-                  onPress={() =>
-                    navigation.navigate(
-                      "DetailPokemon" as never,
-                      { id: item.id } as never
-                    )
-                  }
-                >
-                  <FontAwesome name="info" size={20} color="#969696" />
-                </TouchableHighlight>
-              </View>
-            </View>
-          )}
-        />
-      </View>
-      <View style={styles.footerContainer}>
-        <View style={styles.navigateBefore}>
-          <TouchableHighlight onPress={() => actionNavigation(-25)}>
-            <MaterialIcons name="navigate-before" size={24} color="#969696" />
-          </TouchableHighlight>
+      <View style={styles.container}>
+        <View style={styles.listContainer}>
+          {
+            loadingData ? <View style={styles.containerLoading}><Text>Loading...</Text></View> :
+              <FlatList
+                keyExtractor={(item) => item.id.toString()}
+                data={pokemonList}
+                ItemSeparatorComponent={ItemSeprator}
+                renderItem={({ item }) => (
+                  <View style={styles.itemList}>
+                    <View style={{ flex: 2 }}>
+                      <Image
+                        source={{
+                          uri: `${item.urlImage}`,
+                        }}
+                        style={{ width: 30, height: 30 }}
+                      ></Image>
+                    </View>
+                    <View style={{ flex: 4 }}>
+                      <Text style={{ fontSize: 16 }}>{item.name}</Text>
+                    </View>
+                    <View style={{ flex: 1 }}>
+                      <TouchableHighlight
+                        onPress={() =>
+                          navigation.navigate(
+                            "DetailPokemon" as never,
+                            { id: item.id } as never
+                          )
+                        }
+                      >
+                        <FontAwesome name="info" size={20} color="#969696" />
+                      </TouchableHighlight>
+                    </View>
+                  </View>
+                )}
+              />
+          }
+
         </View>
-        <View style={styles.navigateNext}>
-          <TouchableHighlight onPress={() => actionNavigation(25)}>
-            <MaterialIcons name="navigate-next" size={24} color="#969696" />
-          </TouchableHighlight>
+        <View style={styles.footerContainer}>
+          <View style={styles.navigateBefore}>
+            <TouchableHighlight onPress={() => actionNavigation(-25)}>
+              <MaterialIcons name="navigate-before" size={24} color="#969696" />
+            </TouchableHighlight>
+          </View>
+          <View style={styles.navigateNext}>
+            <TouchableHighlight onPress={() => actionNavigation(25)}>
+              <MaterialIcons name="navigate-next" size={24} color="#969696" />
+            </TouchableHighlight>
+          </View>
         </View>
       </View>
-    </View>
   );
 };
 
@@ -113,6 +121,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  containerLoading: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
   listContainer: {
     flex: 0.94,
   },
@@ -122,13 +135,13 @@ const styles = StyleSheet.create({
   },
   navigateBefore: {
     flex: 1,
-    alignItems:'center',
-    justifyContent:'center'
+    alignItems: 'center',
+    justifyContent: 'center'
   },
   navigateNext: {
     flex: 1,
-    alignItems:'center',
-    justifyContent:'center'
+    alignItems: 'center',
+    justifyContent: 'center'
   },
   itemList: {
     flex: 1,

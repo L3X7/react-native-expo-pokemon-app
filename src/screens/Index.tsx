@@ -1,13 +1,13 @@
 import React, { Component } from "react";
-import { View, StyleSheet } from "react-native";
+import { StyleSheet, SafeAreaView, Platform, StatusBar } from "react-native";
 import PokemonList from "../components/pokemon-list.component";
 
 export default class Index extends Component {
   render() {
     return (
-      <View style={styles.container}>
+      <SafeAreaView  style={styles.container}>
         <PokemonList></PokemonList>
-      </View>
+      </SafeAreaView >
     );
   }
 }
@@ -15,5 +15,6 @@ export default class Index extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0
   },
 });
