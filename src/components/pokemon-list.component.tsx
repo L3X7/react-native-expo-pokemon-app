@@ -61,6 +61,10 @@ const PokemonList = (props: any) => {
           .getByName(text)
           .then((result: any) => {
             pokemoninterfaceList = [];
+            pagination = {
+              limit: 25,
+              offset: 0,
+            };
             if (result.data.length != 0) {
               let pokemonModel: PokemonInterface = {
                 id: result.data.id,
@@ -70,6 +74,7 @@ const PokemonList = (props: any) => {
 
               pokemoninterfaceList.push(pokemonModel);
             }
+         
             setPokemonList(pokemoninterfaceList);
             setLoadingData(false);
           })
