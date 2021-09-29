@@ -4,135 +4,154 @@ import { Card } from "react-native-elements";
 import { PokemonService } from "../services/pokemon.service";
 import PokemonTypeDetail from "./pokemon-type-detail.component";
 
-
 const PokemonDetail = ({ idPokemon }: { idPokemon: number }) => {
+  let pokemonService = new PokemonService();
+  const [pokemonDetail, setPokemonDetail] = useState<PokemonDetailInterface>();
+  const [loadingData, setLoadingData] = useState<boolean>(true);
 
-    let pokemonService = new PokemonService();
-    const [pokemonDetail, setPokemonDetail] = useState<PokemonDetailInterface>();
-    const [loadingData, setLoadingData] = useState<boolean>(true);
+  const getPokemon = (id: number) => {
+    pokemonService
+      .get(id)
+      .then((result: any) => {
+        var types = result.data.types.map((value: any) => {
+          return value.type.name;
+        });
 
-    const getPokemon = (id: number) => {
-        pokemonService
-            .get(id)
-            .then((result: any) => {
+        let pokemonDetailInterface: PokemonDetailInterface = {
+          id: id,
+          name: result.data.name,
+          urlImage: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`,
+          types: types,
+          weight: result.data.weight,
+          height: result.data.height,
+        };
+        setPokemonDetail(pokemonDetailInterface);
+        setLoadingData(false);
+      })
+      .catch((e) => {
+        setLoadingData(false);
+      });
+  };
 
-                var types = result.data.types.map((value: any) => {
-                    return value.type.name;
-                })
+  useEffect(() => {
+    getPokemon(idPokemon);
+  }, []);
 
-                let pokemonDetailInterface: PokemonDetailInterface = {
-
-                    id: id,
-                    name: result.data.name,
-                    urlImage: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`,
-                    types: types,
-                    weight: result.data.weight,
-                    height: result.data.height
-                };
-                setPokemonDetail(pokemonDetailInterface);
-                setLoadingData(false);
-            })
-            .catch((e) => {
-                setLoadingData(false);
-            });
-    };
-
-    useEffect(() => {
-        getPokemon(idPokemon);
-    }, []);
-
-
-
-    return (
-        <View style={{ flex: 1, backgroundColor: 'white', margin: 20, flexDirection: 'column' }}>
-            <View style={{ flex: 0.10, justifyContent: 'center', alignItems: 'center' }}>
-                <Text style={style.cardTextTitle}>{pokemonDetail?.name}</Text>
-            </View>
-            <View style={{ flex: 0.50, justifyContent: 'center', alignItems: 'center' }}>
-                <Image source={{ uri: pokemonDetail?.urlImage }} style={style.imageCard}></Image>
-            </View>
-            <View style={{ flex: 0.40 }}>
-                {
-                    renderRowType('Tipo', pokemonDetail?.types)
-                }
-                {/* {
-                    renderRow('Peso', pokemonDetail?.weight)
-                }
-                {
-                    renderRow('Altura', pokemonDetail?.height)
-                } */}
-            </View>
-        </View>
-    );
-}
-
-const renderRow = (title: any, description: any) =>
-    <View style={style.cardBodyDetail}>
-        <View style={style.cardBodyDetailChild} >
-            <Text>{title}:</Text>
-        </View>
-        <View style={style.cardBodyDetailChild} >
-            <Text style={{ fontSize: 18, fontWeight: 'bold' }}>{description}</Text>
-        </View>
+  return (
+    <View style={style.cardBody}>
+      <View style={style.cardBodyHeader}>
+        <Text style={style.cardTextTitle}>{pokemonDetail?.name}</Text>
+      </View>
+      <View style={style.cardBodyImage}>
+        <Image
+          source={{ uri: pokemonDetail?.urlImage }}
+          style={style.imageCard}
+        ></Image>
+      </View>
+      <View style={style.cardBodyDetailContainer}>
+        {renderRowType("Tipo", pokemonDetail?.types)}
+        {renderRow("Peso", pokemonDetail?.weight)}
+        {renderRow("Altura", pokemonDetail?.height)}
+      </View>
     </View>
+  );
+};
 
-const renderRowType = (title: any, description?: string[]) =>
-    <View style={style.cardBodyDetail}>
-        <View style={style.cardBodyDetailChild} >
-            <Text>{title}:</Text>
-        </View>
-        <View style={style.cardBodyDetailChildType} >
-            {
-                description?.map((value, index) => <View style={{ flex: 1 }} key={index}>
-                    <PokemonTypeDetail typeName={value}></PokemonTypeDetail>
-                </View>)
-            }
-        </View>
+const renderRow = (title: any, description: any) => (
+  <View style={style.cardBodyDetail}>
+    <View style={style.cardBodyDetailChild}>
+      <Text>{title}:</Text>
     </View>
+    <View style={style.cardBodyDetailChild}>
+      <Text style={style.cardBodyDetailChildText}>{description}</Text>
+    </View>
+  </View>
+);
+
+const renderRowType = (title: any, description?: string[]) => (
+  <View style={style.cardBodyDetail}>
+    <View style={style.cardBodyDetailChild}>
+      <Text>{title}:</Text>
+    </View>
+    <View style={style.cardBodyDetailChildType}>
+      {description?.map((value, index) => (
+        <View style={style.cardBodyDetailChildTypeElement} key={index}>
+          <PokemonTypeDetail typeName={value}></PokemonTypeDetail>
+        </View>
+      ))}
+    </View>
+  </View>
+);
 
 const style = StyleSheet.create({
-    containerLoading: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center'
+  cardBody: {
+    flex: 1,
+    backgroundColor: "white",
+    margin: 20,
+    flexDirection: "column",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 1,
     },
-    cardTextTitle: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        marginTop: 10,
-        marginBottom: 10
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
 
-    },
-    cardTextSubTitle: {
-        color: '#969696'
-    },
-    cardBody: {
-        flex: 1,
-        flexDirection: 'column'
-    },
-    cardBodyImage: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center'
-
-    },
-    imageCard: {
-        width: 250,
-        height: 250
-    },
-    cardBodyDetail: {
-        flex: 1,
-        flexDirection: 'row'
-    },
-    cardBodyDetailChild: {
-        flex: 1,
-        padding: 5
-    },
-    cardBodyDetailChildType: {
-        flex: 1,
-        flexDirection: 'column',
-        backgroundColor: 'red'
-    }
+    elevation: 3,
+  },
+  cardBodyHeader: {
+    flex: 0.1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  cardBodyImage: {
+    flex: 0.5,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  imageCard: {
+    width: 250,
+    height: 250,
+  },
+  containerLoading: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  cardTextTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginTop: 10,
+    marginBottom: 10,
+  },
+  cardTextSubTitle: {
+    color: "#969696",
+  },
+  cardBodyDetailContainer: {
+    flex: 0.4,
+  },
+  cardBodyDetail: {
+    flex: 1,
+    flexDirection: "row",
+  },
+  cardBodyDetailChild: {
+    flex: 1,
+    padding: 5,
+    marginLeft: 10,
+  },
+  cardBodyDetailChildText: {
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  cardBodyDetailChildType: {
+    flex: 1,
+    flexDirection: "column",
+  },
+  cardBodyDetailChildTypeElement: {
+    width: "100%",
+    height: 20,
+    marginBottom: 10,
+  },
 });
 
 export default PokemonDetail;
